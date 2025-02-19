@@ -3,6 +3,7 @@ import axios from "axios";
 
 const ViewApplicants = ({ token }) => {
   const [applicants, setApplicants] = useState([]);
+  const [statusUpdates, setStatusUpdates] = useState({});
 
   useEffect(() => {
     fetchApplicants();
@@ -20,15 +21,60 @@ const ViewApplicants = ({ token }) => {
     }
   };
 
+  const handleStatusChange = (applicantId, newStatus) => {
+    setStatusUpdates((prev) => ({ ...prev, [applicantId]: newStatus }));
+  };
+
+  const updateStatus = async (jobId, applicantId) => {
+    if (!statusUpdates[applicantId]) return;
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/recruiter/${jobId}/applicants/${applicantId}`,
+        { status: statusUpdates[applicantId] },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchApplicants();
+      window.alert("Application status updated successfully!");
+    } catch (error) {
+      console.error("Error updating applicant status", error);
+    }
+  };
+
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-[#023047]">Applicants</h2>
-      <ul className="mt-4 space-y-2">
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <h2 className="text-3xl font-bold text-[#023047] mb-6 text-left">Applicants</h2>
+      <ul className="space-y-4">
         {applicants.map((applicant) => (
-          <li key={applicant.applicantId} className="p-4 border rounded bg-white shadow">
-            <h3 className="font-bold text-lg">{applicant.name}</h3>
+          <li
+            key={applicant.applicantId}
+            className="p-6 border rounded-lg bg-white shadow-lg hover:shadow-xl transition duration-300"
+          >
+            <h3 className="font-bold text-xl text-[#023047]">{applicant.name}</h3>
             <p className="text-gray-600">{applicant.email}</p>
-            <p className="text-gray-500">Applied for: {applicant.jobTitle}</p>
+            <p className="text-gray-700 font-semibold">Applied for: {applicant.jobTitle}</p>
+            <p className="text-gray-700 font-semibold">Company: {applicant.company}</p>
+            <p className="text-gray-700 font-semibold">Skills: <span className="text-[#219ebc]">{applicant.skills.join(", ")}</span></p>
+            <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0">
+              <label className="font-semibold text-gray-700">Status:</label>
+              <select
+                value={statusUpdates[applicant.applicantId] || applicant.status}
+                onChange={(e) =>
+                  handleStatusChange(applicant.applicantId, e.target.value)
+                }
+                className="border rounded-lg p-2 bg-white focus:ring-2 focus:ring-[#fb8500] transition w-full sm:w-auto"
+              >
+                <option value="applied">Applied</option>
+                <option value="shortlisted">Shortlisted</option>
+                <option value="rejected">Rejected</option>
+                <option value="hired">Hired</option>
+              </select>
+              <button
+                onClick={() => updateStatus(applicant.jobId, applicant.applicantId)}
+                className="bg-[#fb8500] text-white px-4 py-2 rounded-lg hover:bg-[#d97706] transition w-full sm:w-auto"
+              >
+                Update
+              </button>
+            </div>
           </li>
         ))}
       </ul>

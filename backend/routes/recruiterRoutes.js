@@ -119,10 +119,12 @@ router.get("/applicants", jwtAuthMiddleware, async (req, res) => {
     const applicants = jobs.flatMap(job => job.applicants.map(applicant => ({
       jobTitle: job.title,
       jobId: job._id,
+      company: job.company,
       applicantId: applicant.applicantId._id,
       name: applicant.applicantId.name,
       email: applicant.applicantId.email,
-      profile: applicant.applicantId.profile,
+      resume: job.resume,
+      skills: job.skillsRequired,
       status: applicant.status,
     })));
 

@@ -1,5 +1,6 @@
 const express = require("express");
 const Job = require('../models/jobSchema');
+const Applicant = require('../models/applicantSchema')
 const jwtAuthMiddleware = require("../jwtAuthMiddleware");
 const router = express.Router();
 
@@ -167,6 +168,10 @@ router.post("/apply/:id", jwtAuthMiddleware, async (req, res) => {
     // Add applicant to the job's applicants list
     job.applicants.push({ applicantId: userId });
     await job.save();
+
+    const applicant = await Applicant.findById(userId);
+    applicant.appliedJobs.push({ jobId: jobId, status: "applied" });
+    await applicant.save(); 
 
     res.status(200).json({ message: "Application submitted successfully" });
   } catch (error) {
