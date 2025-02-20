@@ -21,16 +21,18 @@ const ViewApplicants = ({ token }) => {
     }
   };
 
-  const handleStatusChange = (applicantId, newStatus) => {
-    setStatusUpdates((prev) => ({ ...prev, [applicantId]: newStatus }));
+  const handleStatusChange = (jobId, applicantId, newStatus) => {
+    setStatusUpdates((prev) => ({ ...prev, [`${jobId}-${applicantId}`]: newStatus }));
   };
 
   const updateStatus = async (jobId, applicantId) => {
-    if (!statusUpdates[applicantId]) return;
+    const statusKey = `${jobId}-${applicantId}`;
+    if (!statusUpdates[statusKey]) return;
+    
     try {
       await axios.put(
         `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/recruiter/${jobId}/applicants/${applicantId}`,
-        { status: statusUpdates[applicantId] },
+        { status: statusUpdates[statusKey] },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchApplicants();
@@ -46,7 +48,7 @@ const ViewApplicants = ({ token }) => {
       <ul className="space-y-4">
         {applicants.map((applicant) => (
           <li
-            key={applicant.applicantId}
+            key={`${applicant.jobId}-${applicant.applicantId}`} // Unique key
             className="p-6 border rounded-lg bg-white shadow-lg hover:shadow-xl transition duration-300"
           >
             <h3 className="font-bold text-xl text-[#023047]">{applicant.name}</h3>
@@ -57,9 +59,9 @@ const ViewApplicants = ({ token }) => {
             <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0">
               <label className="font-semibold text-gray-700">Status:</label>
               <select
-                value={statusUpdates[applicant.applicantId] || applicant.status}
+                value={statusUpdates[`${applicant.jobId}-${applicant.applicantId}`] || applicant.status}
                 onChange={(e) =>
-                  handleStatusChange(applicant.applicantId, e.target.value)
+                  handleStatusChange(applicant.jobId, applicant.applicantId, e.target.value)
                 }
                 className="border rounded-lg p-2 bg-white focus:ring-2 focus:ring-[#fb8500] transition w-full sm:w-auto"
               >

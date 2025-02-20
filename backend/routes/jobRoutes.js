@@ -100,7 +100,7 @@ router.get("/applied", jwtAuthMiddleware, async (req, res) => {
     // Find all jobs where the applicant has applied
     const jobs = await Job.find({ "applicants.applicantId": applicantId })
       .populate("recruiter", "name email company") // Populate recruiter details
-      .select("title company location jobType applicants"); // Select relevant fields
+      .select("title company location salary jobType applicants"); // Select relevant fields
 
     // Format response to include application status
     const appliedJobs = jobs.map(job => {
@@ -110,6 +110,7 @@ router.get("/applied", jwtAuthMiddleware, async (req, res) => {
         title: job.title,
         company: job.company,
         location: job.location,
+        salary: job.salary,
         jobType: job.jobType,
         recruiter: job.recruiter,
         applicationStatus: application ? application.status : "Unknown",
