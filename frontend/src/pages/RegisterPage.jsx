@@ -21,7 +21,7 @@ const RegisterPage = () => {
     try {
       const res = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/auth/register`, formData);
       alert(res.data.message);
-      navigate("/");
+      navigate("/auth/login");
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
     }

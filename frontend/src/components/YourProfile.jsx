@@ -113,11 +113,11 @@ const YourProfile = () => {
   if (error) return <div className="text-red-500">Error: {error}</div>;
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200 mb-6">
-      <h1 className="text-lg font-bold text-[#023047] mb-4 flex items-center">
+    <>
+    <h1 className="text-lg font-bold text-[#023047] mb-4 flex items-center">
         Your Profile
       </h1>
-
+    <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200 mb-6">
       {/* Profile Header */}
       <div className="flex items-center justify-between bg-[#bbdefb] p-4 rounded-lg shadow-sm border-l-4 border-[#219ebc]">
         <div className="flex items-center">
@@ -291,6 +291,7 @@ const YourProfile = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 

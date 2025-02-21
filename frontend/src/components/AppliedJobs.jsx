@@ -33,10 +33,11 @@ const AppliedJobs = () => {
   if (error) return <div className="text-red-500">Error: {error}</div>;
 
   return (
-    <div className="bg-white shadow-lg rounded-lg border border-gray-200">
-      <h1 className="text-lg font-bold text-[#023047] mb-4 p-4">
+    <>
+    <h1 className="text-lg font-bold text-[#023047] mb-4 p-4">
         Applied Jobs
       </h1>
+    <div className=" shadow-lg rounded-lg border border-gray-200">
       <div className="overflow-x-auto rounded-lg border border-gray-200">
         <table className="min-w-full bg-white shadow-md rounded-lg">
           <thead>
@@ -69,6 +70,7 @@ const AppliedJobs = () => {
         </table>
       </div>
     </div>
+    </>
   );
 };
 

@@ -4,7 +4,7 @@ const Applicant = require('../models/applicantSchema')
 const jwtAuthMiddleware = require("../jwtAuthMiddleware");
 const router = express.Router();
 
-//get list of all jobs
+//get list of all jobs(YHH USE KRRNA H )
 router.get("/list", async (req, res) => {
     try {
       // Fetch all jobs and populate recruiter details (excluding password)
@@ -27,7 +27,10 @@ router.get("/", async (req, res) => {
       query.$or = [
         { title: { $regex: search, $options: "i" } },
         { desc: { $regex: search, $options: "i" } },
-        { company: { $regex: search, $options: "i" } }
+        { company: { $regex: search, $options: "i" } },
+        { location: { $regex: search, $options: "i" } },
+        { jobType: { $regex: search, $options: "i" } },
+        { skillsRequired: { $regex: search, $options: "i" } },
       ];
     }
 
@@ -42,8 +45,8 @@ router.get("/", async (req, res) => {
     }
 
     // Pagination values
-    const pageNumber = parseInt(page, 6);
-    const limitNumber = parseInt(limit, 6);
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
     const skip = (pageNumber - 1) * limitNumber;
 
     // Get total count for pagination
@@ -124,7 +127,7 @@ router.get("/applied", jwtAuthMiddleware, async (req, res) => {
   }
 });
 
-//to get a specific job by id
+//to get a specific job by id(YHH USE KRRNA H )
 router.get("/:id", async (req, res) => {
     try {
       const { id } = req.params;
@@ -181,7 +184,7 @@ router.post("/apply/:id", jwtAuthMiddleware, async (req, res) => {
   }
 });
 
-//to get status of a particular job
+//to get status of a particular job(YHH USE KRRNA H )
 router.get("/status/:id", jwtAuthMiddleware, async (req, res) => {
   try {
     const { id: applicationId } = req.params;

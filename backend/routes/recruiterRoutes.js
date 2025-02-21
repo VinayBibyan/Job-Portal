@@ -100,7 +100,6 @@ router.put("/:id", jwtAuthMiddleware, async (req, res) => {
     }
 });
 
-
 // to get all applicants who applied for jobs created by a particular recruiter
 router.get("/applicants", jwtAuthMiddleware, async (req, res) => {
   try {
@@ -171,7 +170,7 @@ router.delete("/:id", jwtAuthMiddleware, async (req, res) => {
     }
 });
 
-//to get list of all the applicants applied for any particular job
+//to get list of all the applicants applied for any particular job(YHH FILHAAL KHI USE NHI HO RAHA H)
 router.get("/:id/applicants", jwtAuthMiddleware, async (req, res) => {
   try {
     const { id: jobId } = req.params;
