@@ -8,10 +8,34 @@ function LandingPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [user, setUser] = useState(null);
+
 
   useEffect(() => {
     fetchJobs();
   }, [page]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log(token)
+    checkUser(token);
+  }, [])
+
+  const checkUser = async (token) => {
+    if (token) {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/auth/profile`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log(res.data.name)
+        setUser(res.data);
+      } catch (error) {
+        console.error("Error fetching user profile", error);
+        localStorage.removeItem("token"); // Remove invalid token
+      }
+    }
+  };
+  
 
   const fetchJobs = async () => {
     try {
@@ -25,14 +49,31 @@ function LandingPage() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+    navigate("/");
+  };
+
   return (
     <div className="h-screen flex flex-col bg-[#f0f8ff]">
       {/* Navbar */}
       <nav className="bg-[#023047] shadow-md py-3 px-6 flex justify-between items-center sticky top-0">
         <Link to="/" className="text-2xl font-bold text-[#ffb703]">Job Portal</Link>
         <div className="flex items-center space-x-4">
-          <button onClick={() => navigate('/auth/register')} className="text-[#bbdefb] hover:text-[#fb8500]">Signup</button>
-          <button onClick={() => navigate('/auth/login')} className="bg-[#fb8500] text-white px-4 py-2 rounded-full hover:bg-[#219ebc] transition">Login</button>
+          {user ? (
+            <div className="flex items-center space-x-4">
+              <span className="text-[#ffb703] font-semibold">Hi, {user.name}</span>
+              <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition">
+                Logout
+              </button>
+            </div>
+          ) : (
+            <>
+              <button onClick={() => navigate('/auth/register')} className="text-[#bbdefb] hover:text-[#fb8500]">Signup</button>
+              <button onClick={() => navigate('/auth/login')} className="bg-[#fb8500] text-white px-4 py-2 rounded-full hover:bg-[#219ebc] transition">Login</button>
+            </>
+          )}
         </div>
       </nav>
 
