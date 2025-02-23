@@ -73,7 +73,7 @@ function JobPage() {
           <h2 className="text-2xl font-semibold text-[#023047] mb-4">Job Details</h2>
           <p className="text-lg text-gray-700"><strong>Company:</strong> {job.company}</p>
           <p className="text-lg text-gray-700"><strong>Location:</strong> {job.location}</p>
-          <p className="text-lg text-gray-700"><strong>Salary:</strong> ₹{job.salary}K</p>
+          <p className="text-lg text-gray-700"><strong>Salary:</strong> ${job.salary}</p>
           <p className="text-lg text-gray-700"><strong>Job Type:</strong> {job.jobType}</p>
           <p className="text-lg text-gray-700"><strong>Recruiter:</strong> {job.recruiter.name}</p>
         </div>

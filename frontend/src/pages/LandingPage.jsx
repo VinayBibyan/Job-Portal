@@ -64,6 +64,15 @@ function LandingPage() {
           {user ? (
             <div className="flex items-center space-x-4">
               <span className="text-[#ffb703] font-semibold">Hi, {user.name}</span>
+              
+              {/* Profile Button */}
+              <button 
+                onClick={() => navigate('/auth/profile')} 
+                className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition"
+              >
+                Profile
+              </button>
+
               <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition">
                 Logout
               </button>
@@ -78,7 +87,7 @@ function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <header className="relative h-[40vh] bg-gradient-to-r from-[#219ebc] to-[#bbdefb] flex flex-col justify-center items-center text-center px-4 shadow-md">
+      <header className="relative h-[32vh] bg-gradient-to-r from-[#219ebc] to-[#bbdefb] flex flex-col justify-center items-center text-center px-4 shadow-md">
         <h1 className="text-5xl font-extrabold text-[#023047]">Find Your Dream Job</h1>
         <p className="mt-2 text-lg text-white">Opportunities that match your skills and passion</p>
         <div className="mt-6 flex items-center bg-white p-2 rounded-lg shadow-md w-full max-w-lg">
@@ -91,7 +100,7 @@ function LandingPage() {
       <section className="flex-grow overflow-hidden p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {jobs.length > 0 ? (
           jobs.map((job) => (
-            <div key={job._id} className="bg-white p-5 rounded-lg shadow-lg border-l-4 border-[#fb8500] text-left hover:shadow-xl transition">
+            <div key={job._id} className="bg-white p-5 rounded-lg shadow-lg border-l-4 border-[#fb8500] text-left hover:shadow-xl transition min-h-[250px] self-start">
               <h2 className="text-xl font-bold text-[#023047]">{job.title}</h2>
               <p className="text-[#219ebc] mt-1">{job.location}</p>
               <p className="mt-2 text-gray-700">{job.desc}</p>

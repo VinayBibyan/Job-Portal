@@ -90,7 +90,6 @@ router.get("/profile", jwtAuthMiddleware, async (req, res) => {
         user = await Applicant.findById(id)
           .select("-password") // Exclude password
           .populate("appliedJobs.jobId", "title company location");  // Populate job details
-        console.log(user)
       } else if (role === "recruiter") {
         user = await Recruiter.findById(id)
           .select("-password")
