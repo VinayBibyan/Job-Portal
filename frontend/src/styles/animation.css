@@ -1,0 +1,60 @@
+/* Twinkling Stars and Comet Animation */
+.hero-animation {
+  background: linear-gradient(to bottom, #000428, #004e92); /* Dark blue gradient for space */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Twinkling Stars */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 2s infinite ease-in-out;
+}
+
+/* Comet with Tail */
+@keyframes comet {
+  0% {
+    transform: translateX(-100%) translateY(-50%) rotate(45deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100vw) translateY(-50%) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+.comet {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: comet 10s infinite linear;
+}
+
+.comet::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px; /* Length of the tail */
+  height: 2px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), white, rgba(255, 255, 255, 0));
+  transform: translate(-50%, -50%) rotate(-45deg);
+  filter: blur(2px);
+}
