@@ -122,8 +122,8 @@ router.get("/applicants", jwtAuthMiddleware, async (req, res) => {
       applicantId: applicant.applicantId._id,
       name: applicant.applicantId.name,
       email: applicant.applicantId.email,
-      resume: job.resume,
-      skills: job.skillsRequired,
+      resume: applicant.applicantId.profile.resume, 
+      skills: applicant.applicantId.profile.skills, 
       status: applicant.status,
     })));
 

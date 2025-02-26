@@ -15,6 +15,7 @@ const ViewApplicants = ({ token }) => {
         `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/recruiter/applicants`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      console.log(res.data)
       setApplicants(res.data.applicants);
     } catch (error) {
       console.error("Error fetching applicants", error);

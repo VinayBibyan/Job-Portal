@@ -33,24 +33,25 @@ const RecruiterProfile = () => {
       {/* Sidebar */}
       <div className="w-1/5 bg-[#023047] text-white p-6 space-y-4">
         <button
-          className="w-full py-3 text-lg font-bold bg-[#fb8500] rounded-lg"
+          className="w-full py-3 text-lg font-bold bg-[#fb8500] rounded-lg hover:bg-[#e07a00] cursor-pointer"
           onClick={() => setActiveTab("addJob")}
         >
           Add Job
         </button>
         <button
-          className="w-full py-3 text-lg font-bold bg-[#219ebc] rounded-lg"
+          className="w-full py-3 text-lg font-bold bg-[#219ebc] rounded-lg hover:bg-[#1b84a3] cursor-pointer"
           onClick={() => setActiveTab("manageJobs")}
         >
           Manage Jobs
         </button>
         <button
-          className="w-full py-3 text-lg font-bold bg-[#ffb703] rounded-lg"
+          className="w-full py-3 text-lg font-bold bg-[#ffb703] rounded-lg hover:bg-[#e0a002] cursor-pointer"
           onClick={() => setActiveTab("viewApplicants")}
         >
           View Applicants
         </button>
       </div>
+
       {/* Main Content */}
       <div className="w-4/5 p-6 overflow-y-auto">
         {activeTab === "addJob" && <AddJobs token={token} fetchJobs={fetchJobs} />}

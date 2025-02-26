@@ -4,7 +4,7 @@ const Applicant = require('../models/applicantSchema')
 const jwtAuthMiddleware = require("../jwtAuthMiddleware");
 const router = express.Router();
 
-//get list of all jobs(YHH USE KRRNA H )
+//get list of all jobs
 router.get("/list", async (req, res) => {
     try {
       // Fetch all jobs and populate recruiter details (excluding password)
@@ -127,7 +127,7 @@ router.get("/applied", jwtAuthMiddleware, async (req, res) => {
   }
 });
 
-//to get a specific job by id(YHH USE KRRNA H )
+//to get a specific job by id
 router.get("/:id", async (req, res) => {
     try {
       const { id } = req.params;
@@ -184,7 +184,7 @@ router.post("/apply/:id", jwtAuthMiddleware, async (req, res) => {
   }
 });
 
-//to get status of a particular job(YHH USE KRRNA H )
+//to get status of a particular job
 router.get("/status/:id", jwtAuthMiddleware, async (req, res) => {
   try {
     const { id: applicationId } = req.params;

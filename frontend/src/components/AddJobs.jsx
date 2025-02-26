@@ -133,6 +133,12 @@ const AddJobs = ({ token, fetchJobs }) => {
             type="text"
             value={skillInput}
             onChange={(e) => setSkillInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addSkill();
+              }
+            }}
             placeholder="Add a skill"
             className="p-2 rounded flex-1"
           />

@@ -4,6 +4,7 @@ import axios from "axios";
 const ManageJobs = ({ jobs, token, fetchJobs }) => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [editJobData, setEditJobData] = useState(null);
+  const [newSkill, setNewSkill] = useState(""); 
 
   const handleEdit = (job) => {
     setSelectedJob(job._id);
@@ -15,6 +16,25 @@ const ManageJobs = ({ jobs, token, fetchJobs }) => {
     setEditJobData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle adding skills
+  const handleAddSkill = () => {
+    if (newSkill.trim() && !editJobData.skillsRequired.includes(newSkill.trim())) {
+      setEditJobData((prev) => ({
+        ...prev,
+        skillsRequired: [...prev.skillsRequired, newSkill.trim()],
+      }));
+      setNewSkill("");
+    }
+  };
+
+  // Handle removing skills
+  const handleRemoveSkill = (skillToRemove) => {
+    setEditJobData((prev) => ({
+      ...prev,
+      skillsRequired: prev.skillsRequired.filter((skill) => skill !== skillToRemove),
+    }));
+  };
+
   const handleUpdate = async (jobId) => {
     try {
       await axios.put(
@@ -24,8 +44,10 @@ const ManageJobs = ({ jobs, token, fetchJobs }) => {
       );
       fetchJobs();
       setSelectedJob(null);
+      window.alert("Job updated successfully! ✅"); 
     } catch (error) {
       console.error("Error updating job", error);
+      window.alert("Failed to update job. Please try again. ❌"); 
     }
   };
 
@@ -56,6 +78,7 @@ const ManageJobs = ({ jobs, token, fetchJobs }) => {
               <th className="p-4 border-b">Location</th>
               <th className="p-4 border-b">Salary</th>
               <th className="p-4 border-b">Job Type</th>
+              <th className="p-4 border-b">Skills</th> 
               <th className="p-4 border-b">Applicants</th>
               <th className="p-4 border-b">Actions</th>
             </tr>
@@ -122,6 +145,48 @@ const ManageJobs = ({ jobs, token, fetchJobs }) => {
                   )}
                 </td>
                 <td className="p-4 text-[#219ebc] font-semibold">{job.jobType}</td>
+
+                <td className="p-4">
+                  {selectedJob === job._id ? (
+                    <div className="flex flex-wrap gap-2">
+                      {editJobData.skillsRequired.map((skill, idx) => (
+                        <span key={idx} className="bg-gray-200 px-2 py-1 rounded-full flex items-center">
+                          {skill}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSkill(skill)}
+                            className="ml-2 text-red-500"
+                          >
+                            &times;
+                          </button>
+                        </span>
+                      ))}
+                      <input
+                        type="text"
+                        value={newSkill}
+                        onChange={(e) => setNewSkill(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleAddSkill();
+                          }
+                        }}
+                        placeholder="Add skill"
+                        className="p-1 border rounded"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddSkill}
+                        className="px-2 bg-green-500 text-white rounded"
+                      >
+                        +
+                      </button>
+                    </div>
+                  ) : (
+                    job.skillsRequired.join(", ")
+                  )}
+                </td>
+
                 <td className="p-4 font-semibold text-[#d00000]">{job.applicants.length}</td>
                 <td className="p-4 flex space-x-2">
                   {selectedJob === job._id ? (
