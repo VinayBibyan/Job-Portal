@@ -10,6 +10,9 @@ import {
   FaPhone,
   FaEdit,
   FaSave,
+  FaUpload,
+  FaDownload,
+  FaTimes
 } from "react-icons/fa";
 
 const YourProfile = () => {
@@ -29,6 +32,8 @@ const YourProfile = () => {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newSkill, setNewSkill] = useState("");
+  const [resumeFile, setResumeFile] = useState(null);
+  const [uploadStatus, setUploadStatus] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -66,6 +71,22 @@ const YourProfile = () => {
     }
   };
 
+  const handleResumeChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        setUploadStatus("Only PDF files are allowed!");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        setUploadStatus("File size exceeds 5MB limit!");
+        return;
+      }
+      setResumeFile(file);
+      setUploadStatus(`Selected: ${file.name}`);
+    }
+  };
+
   const handleAddSkill = () => {
     if (newSkill.trim() !== "") {
       setFormData((prev) => ({
@@ -92,21 +113,66 @@ const YourProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Create FormData object for file upload
+      const formDataToSend = new FormData();
+      
+      // Add form data fields
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("email", formData.email);
+      
+      // Add profile fields
+      if (formData.profile.experience) {
+        formDataToSend.append("profile[experience]", formData.profile.experience);
+      }
+      if (formData.profile.education) {
+        formDataToSend.append("profile[education]", formData.profile.education);
+      }
+      if (formData.profile.contact) {
+        formDataToSend.append("profile[contact]", formData.profile.contact);
+      }
+      
+      // Add skills as an array
+      formData.profile.skills.forEach((skill, index) => {
+        formDataToSend.append(`profile[skills][${index}]`, skill);
+      });
+      
+      // Add resume file if selected
+      if (resumeFile) {
+        formDataToSend.append("resume", resumeFile);
+      }
+      
       const response = await axios.put(
         `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/auth/profile`,
-        formData,
+        formDataToSend,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
+      
       setUser(response.data.user);
       setIsEditing(false);
+      setResumeFile(null);
+      setUploadStatus("");
     } catch (err) {
       console.error(err);
-      setError("Failed to update profile.");
+      setError("Failed to update profile: " + (err.response?.data?.message || err.message));
     }
+  };
+
+  const handleDownloadResume = () => {
+    if (user?.profile?.resume) {
+      window.open(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/auth/resume/${user.profile.resume}`,
+      );
+    }
+  };
+
+  const clearResumeSelection = () => {
+    setResumeFile(null);
+    setUploadStatus("");
   };
 
   if (loading) return <div>Loading profile...</div>;
@@ -166,21 +232,80 @@ const YourProfile = () => {
         <form onSubmit={handleSubmit}>
           <div className="space-y-3">
             {/* Resume */}
-            <p className="text-[#023047] font-medium flex items-center">
-              <FaFileAlt className="text-[#fb8500] mr-2" />
-              <span className="font-semibold pr-1">Resume: </span>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="profile.resume"
-                  value={formData.profile.resume}
-                  onChange={handleChange}
-                  className="border border-gray-300 rounded-lg p-2"
-                />
-              ) : (
-                user.profile.resume
-              )}
-            </p>
+            <div className="text-[#023047] font-medium">
+              <div className="flex items-center">
+                <FaFileAlt className="text-[#fb8500] mr-2" />
+                <span className="font-semibold pr-1">Resume: </span>
+                
+                {!isEditing ? (
+                  <>
+                    {user.profile.resume ? (
+                      <div className="flex items-center">
+                        <span className="ml-1">{user.profile.resume}</span>
+                        <button
+                          type="button"
+                          onClick={handleDownloadResume}
+                          className="ml-2 text-[#219ebc]"
+                          title="Download Resume"
+                        >
+                          <FaDownload />
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-gray-500 ml-1">No resume uploaded</span>
+                    )}
+                  </>
+                ) : (
+                  <div className="ml-1 flex-1">
+                    {uploadStatus ? (
+                      <div className="flex items-center bg-blue-50 p-2 rounded">
+                        <span className="flex-1">{uploadStatus}</span>
+                        <button
+                          type="button"
+                          onClick={clearResumeSelection}
+                          className="text-red-500"
+                        >
+                          <FaTimes />
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        {user.profile.resume ? (
+                          <div className="flex items-center bg-blue-50 p-2 rounded">
+                            <span className="flex-1">{user.profile.resume}</span>
+                            <button
+                              type="button"
+                              onClick={handleDownloadResume}
+                              className="text-[#219ebc] mr-2"
+                              title="Download Resume"
+                            >
+                              <FaDownload />
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-gray-500">No resume uploaded</span>
+                        )}
+                      </>
+                    )}
+                    <div className="mt-2">
+                      <label className="flex items-center p-2 rounded-lg bg-[#219ebc] text-white cursor-pointer hover:bg-[#176582] w-fit">
+                        <FaUpload className="mr-2" />
+                        <span>Upload New Resume</span>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleResumeChange}
+                          className="hidden"
+                        />
+                      </label>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Only PDF files up to 5MB are allowed
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* Skills */}
             <p className="text-[#023047] font-medium flex items-center">
@@ -224,7 +349,9 @@ const YourProfile = () => {
                 </div>
               ) : (
                 <span className="ml-1">
-                  {user.profile.skills.join(", ")}
+                  {user.profile.skills && user.profile.skills.length > 0 
+                    ? user.profile.skills.join(", ") 
+                    : "No skills added"}
                 </span>
               )}
             </p>
@@ -237,12 +364,12 @@ const YourProfile = () => {
                 <input
                   type="text"
                   name="profile.experience"
-                  value={formData.profile.experience}
+                  value={formData.profile.experience || ""}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg p-2"
                 />
               ) : (
-                user.profile.experience
+                user.profile.experience || "Not specified"
               )}
             </p>
 
@@ -254,12 +381,12 @@ const YourProfile = () => {
                 <input
                   type="text"
                   name="profile.education"
-                  value={formData.profile.education}
+                  value={formData.profile.education || ""}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg p-2"
                 />
               ) : (
-                user.profile.education
+                user.profile.education || "Not specified"
               )}
             </p>
 
@@ -271,12 +398,12 @@ const YourProfile = () => {
                 <input
                   type="text"
                   name="profile.contact"
-                  value={formData.profile.contact}
+                  value={formData.profile.contact || ""}
                   onChange={handleChange}
                   className="border border-gray-300 rounded-lg p-2"
                 />
               ) : (
-                user.profile.contact
+                user.profile.contact || "Not specified"
               )}
             </p>
           </div>
